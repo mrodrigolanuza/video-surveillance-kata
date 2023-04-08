@@ -1,10 +1,16 @@
 import { MotionSensor, VideoRecorder, SurveillanceController } from "../core/surveillanceController";
 
 describe("The Surveillance Controller", ()=>{
+    let motionSensor : MotionSensor;
+    let recorder : VideoRecorder;
+    let controller : SurveillanceController;
+    beforeEach(()=>{
+        motionSensor = new FakeMotionSensor();
+        recorder = new FakeRecorder();
+        controller = new SurveillanceController(motionSensor, recorder);
+    });
     it("asks the recorder to stop when the sensor detects no motion", ()=>{
-        const motionSensor = new FakeMotionSensor();
-        const recorder = new FakeRecorder();
-        const controller = new SurveillanceController(motionSensor, recorder);
+        
         const spyRecorder = jest.spyOn(recorder, 'stopRecording')
         const stubMotionSensor = jest.spyOn(motionSensor, 'isDetectingMotion');
         stubMotionSensor.mockImplementation(()=> false);
@@ -15,9 +21,6 @@ describe("The Surveillance Controller", ()=>{
     });
 
     it("asks the recorder to start when the sensor detects motion", ()=>{
-        const motionSensor = new FakeMotionSensor();
-        const recorder = new FakeRecorder();
-        const controller = new SurveillanceController(motionSensor, recorder);
         const spyRecorder = jest.spyOn(recorder, 'startRecording')
         const stubMotionSensor = jest.spyOn(motionSensor, 'isDetectingMotion');
         stubMotionSensor.mockImplementation(()=>true);
