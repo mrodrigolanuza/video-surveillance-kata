@@ -13,6 +13,20 @@ describe("The Surveillance Controller", ()=>{
 
         expect(called).toBeTruthy();
     });
+
+    it("asks the recorder to start when the sensor detects motion", ()=>{
+        let called = false;
+        const hasBeenCalled = ()=>{ called = true; }
+        const motionSensor = new FakeSensor();
+        motionSensor.isDetectingMotion = () => true; //Stub para forzar la detección del sensor
+        const recorder = new FakeRecorder();
+        recorder.startRecording = hasBeenCalled; //Spy para comprobar que el controlador internamente llama al método StopRecording (Monkey Patching)
+        const controller = new SurveillanceController(motionSensor, recorder);
+        
+        controller.recordMotion();
+
+        expect(called).toBeTruthy();
+    });
 });
 
 //Creación de objeto Fake que simulan (o hace de doble) del sensor de movimiento

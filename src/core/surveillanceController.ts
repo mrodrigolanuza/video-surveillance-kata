@@ -11,6 +11,11 @@
       constructor(private sensor:MotionSensor, private recorder:VideoRecorder){}
   
       recordMotion(){
-        this.recorder.stopRecording();
+        if(this.sensor.isDetectingMotion()){
+            this.recorder.startRecording();
+        }
+        else{
+            this.recorder.stopRecording();
+        }
       }
   }
