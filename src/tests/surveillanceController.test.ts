@@ -30,7 +30,7 @@ describe("The Surveillance Controller", ()=>{
         expect(spyRecorder).toHaveBeenCalled();
     });
 
-    it("asks the recorder to stop recording when sensor throws an unexpected error ", ()=>{
+    it("asks the recorder to stop recording when sensor throws an unexpected error", ()=>{
         const spyRecorder = jest.spyOn(recorder, 'stopRecording')
         const stubMotionSensor = jest.spyOn(motionSensor, 'isDetectingMotion');
         stubMotionSensor.mockImplementation(()=> {throw new Error("Motion Sensor Unexpected Error")});
@@ -39,6 +39,15 @@ describe("The Surveillance Controller", ()=>{
 
         expect(spyRecorder).toHaveBeenCalled();
         expect(stubMotionSensor).toThrowError();
+    });
+
+    it("check the sensor status once per second", ()=>{
+        const numberOfSeconds = 3;
+        const spyRecorder = jest.spyOn(motionSensor, 'isDetectingMotion')
+                
+        controller.recordMotion(numberOfSeconds);
+
+        expect(spyRecorder).toHaveBeenCalledTimes(numberOfSeconds);
     });
 });
 
