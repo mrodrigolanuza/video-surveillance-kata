@@ -2,29 +2,23 @@ import { MotionSensor, VideoRecorder, SurveillanceController } from "../core/sur
 
 describe("The Surveillance Controller", ()=>{
     it("asks the recorder to stop when the sensor detects no motion", ()=>{
-        let called = false;
-        const hasBeenCalled = ()=>{ called = true; }
         const motionSensor = new StubSensorNoDetectingMotion();
-        const recorder = new FakeRecorder();
-        recorder.stopRecording = hasBeenCalled; //Spy para comprobar que el controlador internamente llama al método StopRecording (Monkey Patching)
+        const recorder = new SpyRecorder();
         const controller = new SurveillanceController(motionSensor, recorder);
         
         controller.recordMotion();
 
-        expect(called).toBeTruthy();
+        expect(recorder.stopRecordingCalled).toBeTruthy();
     });
 
     it("asks the recorder to start when the sensor detects motion", ()=>{
-        let called = false;
-        const hasBeenCalled = ()=>{ called = true; }
         const motionSensor = new StubSensorDetectingMotion();
-        const recorder = new FakeRecorder();
-        recorder.startRecording = hasBeenCalled; //Spy para comprobar que el controlador internamente llama al método StopRecording (Monkey Patching)
+        const recorder = new SpyRecorder();
         const controller = new SurveillanceController(motionSensor, recorder);
         
         controller.recordMotion();
 
-        expect(called).toBeTruthy();
+        expect(recorder.startRecordingCalled).toBeTruthy();
     });
 });
 
@@ -42,11 +36,15 @@ class StubSensorNoDetectingMotion implements MotionSensor{
 }
 
 //Creación de objeto Fake que simula (o hace de doble) de la cámara de grabación
-class FakeRecorder implements VideoRecorder{
+class SpyRecorder implements VideoRecorder{
+    startRecordingCalled = false;
+    stopRecordingCalled = false;
     startRecording(): void {
+        this.startRecordingCalled = true;
         console.log("START recording..");
     }
     stopRecording(): void {
+        this.stopRecordingCalled = true;
         console.log("STOP recording..");
     }
 }
