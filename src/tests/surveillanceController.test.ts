@@ -29,6 +29,17 @@ describe("The Surveillance Controller", ()=>{
 
         expect(spyRecorder).toHaveBeenCalled();
     });
+
+    it("asks the recorder to stop recording when sensor throws an unexpected error ", ()=>{
+        const spyRecorder = jest.spyOn(recorder, 'stopRecording')
+        const stubMotionSensor = jest.spyOn(motionSensor, 'isDetectingMotion');
+        stubMotionSensor.mockImplementation(()=> {throw new Error("Motion Sensor Unexpected Error")});
+
+        controller.recordMotion();
+
+        expect(spyRecorder).toHaveBeenCalled();
+        expect(stubMotionSensor).toThrowError();
+    });
 });
 
 //Creación de objeto Fake que simulan (o hace de doble) del sensor de movimiento
